@@ -1,0 +1,221 @@
+import random
+from datetime import datetime
+from typing import Dict, Any, Optional, List
+
+class PlankTimerBot:
+    """
+    Управление таймерами планки для Telegram бота.
+    Поддерживает несколько одновременных таймеров.
+    """
+    
+    def init(self):
+        self.active_timers: Dict[int, Dict[str, Any]] = {}
+        self.motivations = [
+            "💪 Держи спину ровно!",
+            "🔥 Ещё немного, ты сможешь!",
+            "🚀 Не сдавайся, почти готово!",
+            "🏆 Отличная работа, продолжай!",
+            "🌟 Ты молодец, так держать!",
+            "⚡ Соберись, ты сильнее!",
+            "🎯 Фокусируйся на дыхании!",
+            "🦾 Твои мышцы становятся железными!",
+            "✨ Превосходи себя каждый раз!",
+            "🥇 Будешь чемпионом по планке!"
+        ]
+    
+    def generate_time(self, difficulty: str = "medium") -> int:
+        """Генерирует время планки по уровню сложности."""
+        times = {
+            "easy": (30, 60),
+            "medium": (45, 90), 
+            "hard": (60, 120),
+            "extreme": (90, 180)
+        }
+        
+        if difficulty in times:
+            min_t, max_t = times[difficulty]
+            return random.randint(min_t, max_t)
+        
+        return random.randint(30, 90)
+    
+    def format_time(self, seconds: int) -> str:
+        """Форматирует секунды в MM:SS."""
+        return f"{seconds//60:02d}:{seconds%60:02d}"
+    
+    def start(self, chat_id: int, duration: Optional[int] = None, 
+              difficulty: str = "medium") -> str:
+        """Начинает новый таймер планки."""
+        if duration is None:
+            duration = self.generate_time(difficulty)
+        
+def start_plank(self, chat_id: int, duration: int):
+    """Минимальная структура - только start_time"""
+    # Храним только время начала, остальное вычисляем
+    self.active_timers[chat_id] = {
+        "start_time": datetime.now(),
+        "duration": duration
+    }
+    # current вычисляем на лету, не храним
+        
+        motivation = random.choice(self.motivations)
+        return (f"🪙 *БРОСОК МОНЕТКИ НА ВРЕМЯ!*\n\n"
+                f"Вам выпало: *{duration} секунд* планки!\n\n"
+                f"⏱️ *ТАЙМЕР ЗАПУЩЕН!*\n"
+                f"⏳ Осталось: {self.format_time(duration)}\n"
+                f"💪 {motivation}\n\n"
+                f"🎯 *СОВЕТ:* Держи спину прямо!")
+    
+    def update(self, chat_id: int) -> Optional[str]:
+        """Обновляет таймер и возвращает сообщение о прогрессе."""
+        if chat_id not in self.active_timers:
+            return None
+        
+        timer = self.active_timers[chat_id]
+        
+        if not timer["is_active"]:
+            return None
+        
+        elapsed = (datetime.now() - timer["start_time"]).seconds
+        remaining = max(0, timer["duration"] - elapsed)
+        timer["remaining"] = remaining
+        
+        if remaining <= 0:
+            return self.finish(chat_id)
+        
+        if remaining % 30 == 0 or remaining <= 10:
+            motivation = random.choice(self.motivations)
+            return f"⏳ *{self.format_time(remaining)}* осталось!\n{motivation}"
+        
+        return None
+    
+    def finish(self, chat_id: int) -> Optional[str]:
+        """Завершает таймер планки."""
+        if chat_id not in self.active_timers:
+            return None
+        
+        timer = self.active_timers[chat_id]
+        timer["is_active"] = False
+        duration = timer["duration"]
+        
+        del self.active_timers[chat_id]
+        
+        congrats = [
+            f"🎉 *ПЛАНКА ЗАВЕРШЕНА!*\n\n✅ Вы продержались *{duration} секунд*!",
+            f"🏆 *ОТЛИЧНЫЙ РЕЗУЛЬТАТ!*\n💪 {duration} секунд планки - это круто!",
+            f"🌟 *МОЛОДЕЦ!*\n🔥 {duration} секунд - ты становишься сильнее!"
+        ]
+        
+        return random.choice(congrats)
+    
+    def stop(self, chat_id: int) -> str:
+        """Останавливает таймер досрочно."""
+
+Daniel 🌍 Kanay 🌐QA, [12/01/2026 23:57]
+if chat_id not in self.active_timers:
+            return "❌ У вас нет активной планки!"
+        
+        timer = self.active_timers[chat_id]
+        remaining = timer["remaining"]
+        
+        del self.active_timers[chat_id]
+        
+        return (f"⏹️ *ТАЙМЕР ОСТАНОВЛЕН*\n\n"
+                f"Осталось: {self.format_time(remaining)} секунд\n"
+                f"Попробуй ещё раз позже! 💪")
+    
+    def status(self, chat_id: int) -> str:
+        """Возвращает статус активной планки."""
+        if chat_id in self.active_timers:
+            timer = self.active_timers[chat_id]
+            return (f"⏱️ *АКТИВНАЯ ПЛАНКА*\n\n"
+                    f"Осталось: {self.format_time(timer['remaining'])}\n"
+                    f"Сложность: {timer['difficulty']}")
+        return "🔄 Нет активной планки. Начни новую: /plank"
+
+
+# Глобальный экземпляр
+plank_bot = PlankTimerBot()
+
+def handle_plank_command(command: str, chat_id: int, *args) -> str:
+    """
+    Обработчик команд планки.
+    
+    Args:
+        command: Текст команды
+        chat_id: ID чата
+        *args: Дополнительные аргументы
+        
+    Returns:
+        Текст ответа
+    """
+    cmd = command.lower().lstrip('/')
+    
+    if cmd in ["plank", "планка", "таймер"]:
+        difficulty = "medium"
+        if args and args[0]:
+            arg = args[0].lower()
+            if arg in ["легко", "easy"]:
+                difficulty = "easy"
+            elif arg in ["сложно", "hard"]:
+                difficulty = "hard"
+        return plank_bot.start(chat_id, difficulty=difficulty)
+    
+    elif cmd in ["plank_stop", "стоп", "stop"]:
+        return plank_bot.stop(chat_id)
+    
+    elif cmd in ["plank_status", "статус"]:
+        return plank_bot.status(chat_id)
+    
+    elif cmd in ["plank_time", "время"]:
+        if args and args[0]:
+            try:
+                seconds = int(args[0])
+                if 10 <= seconds <= 300:
+                    return plank_bot.start(chat_id, duration=seconds)
+                return "❌ Введите время от 10 до 300 секунд!"
+            except ValueError:
+                return "❌ Введите число секунд!"
+        return "Укажите время: /plank_time 60"
+    
+    return (
+        "⏱️ *КОМАНДЫ ПЛАНКИ:*\n\n"
+        "🎲 /plank - Случайная планка (30-90 сек)\n"
+        "⚡ /plank легко - Лёгкая планка (30-60 сек)\n"
+        "🔥 /plank сложно - Сложная планка (60-120 сек)\n"
+        "⏱️ /plank_time X - Планка на X секунд\n"
+        "🛑 /стоп - Остановить таймер\n"
+        "📊 /статус - Статус текущей планки"
+    )
+
+# Константы для интерфейса
+PLANK_MENU = (
+    "⏱️ *ТАЙМЕР ПЛАНКИ*\n\n"
+    "Выбери сложность:\n"
+    "[🎲 Легкая (30-60с)] [⚡ Средняя (45-90с)]\n"
+    "[🔥 Сложная (60-120с)]\n\n"
+    "Или укажи своё время:\n"
+    "/plank_time 60"
+)
+
+def main():
+    """Пример использования."""
+    print("🧪 Тестирование PlankTimerBot")
+    print("=" * 40)
+    
+    # Тест 1
+    print("\n1. Случайная планка:")
+    print(handle_plank_command("/plank", 123456))
+    
+    # Тест 2  
+    print("\n2. Статус:")
+    print(handle_plank_command("/статус", 123456))
+    
+    # Тест 3
+    print("\n3. Планка на 45 секунд:")
+    print(handle_plank_command("/plank_time", 123456, "45"))
+    
+    print("\n✅ Тестирование завершено")
+
+if name == "main":
+    main()
+     
