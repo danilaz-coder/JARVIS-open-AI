@@ -1,0 +1,21 @@
+import random
+
+def create_workout():
+    exercises = ["Присед:3x8-12","Жим:4x6-10","Тяга:3x8-12",
+                 "Отжимания:4xMAX","Пресс:3x15-20","Планка:3x30-60с"]
+    
+    warmup = random.choice(["Кардио 5мин","Суставы 5мин","Разминка 5мин"])
+    cool = random.choice(["Растяжка 5мин","Заминка 3мин"])
+    
+    main = random.sample(exercises, k=random.randint(3,4))
+    
+    workout = f"🔥 *ТРЕНИРОВКА:*\n\n🏃‍♂️ Разминка:\n• {warmup}\n\n💪 Основное:\n"
+    for i,ex in enumerate(main,1):
+        workout += f"{i}. {ex}\n"
+    
+    workout += f"\n🧘‍♂️ Заминка:\n• {cool}\n\n💡 Совет: {random.choice(['Пей воду','Отдых 60с','Техника важнее веса'])}"
+    
+    return workout
+
+print(create_workout())
+print(f"Символов: {len(create_workout())}")
