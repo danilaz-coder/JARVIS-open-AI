@@ -1,0 +1,32 @@
+import random
+
+def workout_decision(exercise="бицепс", intensity="средне"):
+    exercises = {
+        "бицепс": ["Подъем штанги", "Молотки", "Концентрированный"],
+        "трицепс": ["Жим лежа", "Французский", "Разгибания"],
+        "грудь": ["Жим штанги", "Разводки", "Бабочка"]
+    }
+    
+    reps_range = {
+        "легко": (12, 15),
+        "средне": (8, 12), 
+        "тяжело": (6, 10)
+    }
+    
+    if exercise in exercises:
+        ex = random.choice(exercises[exercise])
+    else:
+        ex = random.choice(exercises["бицепс"])
+    
+    if intensity in reps_range:
+        reps = random.randint(*reps_range[intensity])
+    else:
+        reps = random.randint(8, 12)
+    
+    sets = random.randint(3, 5)
+    
+    return f"💪 {ex}\n📊 {sets}×{reps}\n🎯 Всего: {sets*reps} повторов"
+
+# Пример использования
+result = workout_decision("бицепс", "тяжело")
+print(result)
