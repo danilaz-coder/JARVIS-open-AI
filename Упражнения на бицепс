@@ -1,0 +1,40 @@
+import random
+
+class BicepsGen:
+    def __init__(self):
+        self.exercises = ["Подъем штанги", "Молотки", 
+                         "Концентрированный", "На скамье Скотта"]
+        self.reps = {"легко": (12,15), "средне": (8,12),
+                    "тяжело": (6,10), "сила": (4,8)}
+    
+    def generate(self, intensity="средне", ex=None):
+        exercise = ex if ex else random.choice(self.exercises)
+        if intensity in self.reps:
+            reps = random.randint(*self.reps[intensity])
+        else:
+            reps = random.randint(8,12)
+        
+        sets = random.randint(3,5)
+        weight = self._calc_weight(intensity, reps)
+        
+        return (f"💪 {exercise}\n"
+                f"📊 {sets}×{reps}\n"
+                f"🏋️‍♂️ ~{weight}кг\n"
+                f"🎯 Всего: {sets*reps} повторов")
+    
+    def _calc_weight(self, intensity, reps):
+        base = {"легко":20, "средне":30, "тяжело":40, "сила":50}
+        mult = {"легко":0.8, "средне":1.0, "тяжело":1.2, "сила":1.5}
+        
+        if intensity in base:
+            return int(base[intensity] * mult[intensity] * (15/reps))
+        return 30
+    
+    def menu(self):
+        levels = "\n".join([f"• {lvl}: {a}-{b} повторов" 
+                           for lvl,(a,b) in self.reps.items()])
+        return f"🏋️‍♂️ БИЦЕПС\n\nУровни:\n{levels}\n\nУпражнения: {', '.join(self.exercises)}"
+
+b = BicepsGen()
+print(b.menu())
+print(b.generate("тяжело"))
